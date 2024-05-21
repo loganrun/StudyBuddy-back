@@ -14,39 +14,7 @@ const openai = new OpenAI({
 
 ffmpeg.setFfmpegPath(ffmpegStatic);
 
-// const outputDirPath = 'path/to/output';
-// const wavFilePath = path.join(outputDirPath,'audio.wav');
 
-// Create the output directory if it doesn't exist
-
-// async function audioConvert(file) {
-//   return new Promise((resolve, reject) => {
-//     tmp.file({ postfix: '.wav' }, async (err, tmpFilePath, fd, cleanupCallback) => {
-//       if (err) {
-//         reject(err);
-//         return;
-//       }
-
-//       const outputDirPath = path.dirname(tmpFilePath);
-
-//       ffmpeg()
-//         .input(`${file}`)
-//         .audioFrequency(16000)
-//         .audioChannels(1)
-//         .audioCodec("pcm_s16le")
-//         .output(tmpFilePath)
-//         .on("end", async () => {
-//           console.log("Conversion finished");
-//           resolve({ tmpFilePath, cleanupCallback });
-//         })
-//         .on("error", (err) => {
-//           console.error("Error:", err);
-//           reject(err);
-//         })
-//         .run();
-//     });
-//   });
-// }
 async function audioConvert(file) {
   return new Promise((resolve, reject) => {
     tmp.file({ postfix: '.flac' }, async (err, tmpFilePath, fd, cleanupCallback) => {
@@ -59,10 +27,10 @@ async function audioConvert(file) {
 
       ffmpeg()
         .input(`${file}`)
-        .audioFrequency(16000) // Whisper recommends a sample rate of 16000 Hz
-        .audioChannels(1) // Whisper recommends mono channel audio
-        .audioCodec("flac") // Set audio codec to FLAC
-        .outputOptions("-compression_level 8") // Set compression level for FLAC (0-8, 8 being highest)
+        .audioFrequency(16000) 
+        .audioChannels(1) 
+        .audioCodec("flac") 
+        .outputOptions("-compression_level 8") 
         .output(tmpFilePath)
         .on("end", async () => {
           console.log("Conversion finished");
