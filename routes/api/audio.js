@@ -4,8 +4,8 @@ import multer from 'multer';
 import path from 'path';
 import Lectures from '../../models/Lectures.js'; 
 import { Storage } from '@google-cloud/storage';
-import Summarization from '../../middleware/summarization.js';
-import Transcript from '../../middleware/transcript.js'
+import Summarization from '../../middleware/summarization.mjs';
+import Transcript from '../../middleware/transcript.mjs'
 import dateFormat, { masks } from "dateformat";
 
 

@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import auth from '../../middleware/auth.js'; // Assuming auth.js is an ESM module
+import auth from '../../middleware/auth.mjs'; // Assuming auth.js is an ESM module
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { check, validationResult } from 'express-validator';
