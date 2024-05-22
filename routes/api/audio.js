@@ -4,9 +4,10 @@ import multer from 'multer';
 import path from 'path';
 import Lectures from '../../models/Lectures.js'; 
 import { Storage } from '@google-cloud/storage';
-import Transcript from '../../middleware/transcript.js';
-import dateFormat, { masks } from "dateformat";
 import Summarization from '../../middleware/summarization.js';
+import Transcript from '../../middleware/transcript.js'
+import dateFormat, { masks } from "dateformat";
+
 
 
 const upload = multer({ storage: multer.memoryStorage() });
