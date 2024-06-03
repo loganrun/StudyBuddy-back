@@ -8,12 +8,17 @@ dotenv.config();
 // Initialize our app variable with Express
 const app = express();
 
+const corsOptions = {
+    origin: 'https://studybuddy0602.netlify.app/', // Replace with your Netlify app's URL
+    optionsSuccessStatus: 200, // Some legacy browsers choke on 204
+  };
+
 // Connect Database
 connectDB();
 
 // Initialize middleware
 app.use(express.json({ extended: false }));
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Single endpoint just to test API. Send data to browser
 app.get('/', (req, res) => res.send('API Running'));
