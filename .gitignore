@@ -2,6 +2,8 @@ node_modules/
 .env
 # Logs
 weetime-4763db2adbbf.json
+study.pem
+ubuntu@ec2-54-183-226-175.us-west-1.compute.amazonaws.com
 logs
 *.log
 npm-debug.log*
