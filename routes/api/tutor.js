@@ -3,12 +3,13 @@ const router = express.Router();
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { check, validationResult } from 'express-validator';
-import User from '../../models/User.js'; 
+import Tutor from '../../models/Tutor.js';
+import mongoose from 'mongoose';
 
 // @route: GET api/users
 // @desc: Test route
 // @access: Public
-router.get('/', (req, res) => res.send('User Route'));
+router.get('/', (req, res) => res.send('Tutor Route'));
 
 // @route: POST api/users
 // @desc: Register User and Get JWT
@@ -32,19 +33,20 @@ router.post('/', [
   // return res.send(req.body)
 
   const { name, email, password } = req.body;
-  
+  const roomId = new mongoose.Types.ObjectId().toString();  // Generate a new room ID
 
   try {
     // Check if user already exists
-    let user = await User.findOne({ email });
-    if (user) {
+    let tutor = await Tutor.findOne({ email });
+    if (tutor) {
       return res.status(400).json([{ msg: 'User already exists' }]);
     }
 
-    user = new User({
+    tutor = new Tutor({
       name,
       email,
-      password
+      password,
+      roomId,  
     });
 
     // Encrypt Password
@@ -52,13 +54,14 @@ router.post('/', [
     user.password = await bcrypt.hash(password, salt);
 
     // Save User
-    await user.save();
+    await tutor.save();
 
     // Create a JWT
     const payload = {
-      user: {
-        id: user.id,
-        name: user.name
+      tutor: {
+        id: tutor.id,
+        name: tutor.name,
+        roomId: tutor.roomId,
       },
     };
 
@@ -78,4 +81,3 @@ router.post('/', [
 });
 
 export default router;
-
