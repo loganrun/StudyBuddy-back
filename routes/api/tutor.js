@@ -32,8 +32,10 @@ router.post('/', [
   // To test information being sent
   // return res.send(req.body)
 
-  const { name, email, password } = req.body;
+  const { name, email, password,userName } = req.body;
   const roomId = new mongoose.Types.ObjectId().toString();  // Generate a new room ID
+  const documentId = new mongoose.Types.ObjectId().toString();
+  const userType = "tutor"
 
   try {
     // Check if user already exists
@@ -46,12 +48,15 @@ router.post('/', [
       name,
       email,
       password,
-      roomId,  
+      userName,
+      roomId,
+      documentId,
+      userType  
     });
 
     // Encrypt Password
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
+    tutor.password = await bcrypt.hash(password, salt);
 
     // Save User
     await tutor.save();
@@ -61,7 +66,10 @@ router.post('/', [
       tutor: {
         id: tutor.id,
         name: tutor.name,
+        userName: tutor.userName,
         roomId: tutor.roomId,
+        documentId: tutor.documentId,
+        userType: tutor.userType
       },
     };
 

@@ -32,6 +32,7 @@ router.post('/', [
   // return res.send(req.body)
 
   const { name, email, password } = req.body;
+  const userType = "tutor"
   
 
   try {
@@ -44,7 +45,8 @@ router.post('/', [
     user = new User({
       name,
       email,
-      password
+      password,
+      userType
     });
 
     // Encrypt Password
@@ -58,7 +60,8 @@ router.post('/', [
     const payload = {
       user: {
         id: user.id,
-        name: user.name
+        name: user.name,
+        userType: user.userType
       },
     };
 

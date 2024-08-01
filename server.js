@@ -11,6 +11,7 @@ import chatRouter from './routes/api/chat.js';
 import lectureRouter from './routes/api/lecture.js'; 
 import tutorRouter from './routes/api/tutor.js'
 import tutorAuthRouter from './routes/api/tutorAuth.js'
+import Document from './models/Document.js';
 
 dotenv.config();
 
@@ -22,40 +23,62 @@ const app = express();
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*', methods: ['GET', 'POST']  }});
+const defaultValue = ""
 
 io.on('connection', (socket) => {
     console.log('New user connected');
 
-    socket.on('join-room', ({ roomId, username }) => {
-        socket.join(roomId);
-        console.log(`${username} has joined room ${roomId}`);
-        socket.broadcast.to(roomId).emit('user-connected', username);
-    });
+    
 
-    socket.on('voice-offer', (roomId, offer) => {
-        socket.to(roomId).emit('voice-offer', offer);
+    socket.on("get-document", async documentId => {
+        //console.log(documentId)
+        const document = await findOrCreateDocument(documentId)
+        socket.join(documentId)
+        socket.emit("load-document", document.data)
+    
+        socket.on("send-changes", delta => {
+        socket.broadcast.to(documentId).emit("receive-changes", delta)
+        })
+    
+        socket.on("save-document", async data => {
+        await Document.findByIdAndUpdate(documentId, { data })
+        })
+    })
+
+    socket.on('voice-offer', ({ roomId, offer }) => {
+        console.log(`Received voice offer for room ${roomId}`);
+        socket.to(roomId).emit('voice-offer', { offer, roomId });
+        console.log(`Forwarded voice offer to room ${roomId}`);
     });
     
-    socket.on('voice-answer', (roomId, answer) => {
-        socket.to(roomId).emit('voice-answer', answer);
+    
+    socket.on('voice-answer', ({ roomId, answer }) => {
+        console.log(`Received voice answer for room ${roomId}`);
+        socket.to(roomId).emit('voice-answer', { answer, roomId });
+        console.log(`Forwarded voice answer to room ${roomId}`);
     });
     
-    socket.on('ice-candidate', (roomId, candidate) => {
-        socket.to(roomId).emit('ice-candidate', candidate);
+    
+    socket.on('ice-candidate', ({ roomId, candidate }) => {
+        console.log(`Received ICE candidate for room ${roomId}`, candidate);
+        socket.to(roomId).emit('ice-candidate', { candidate, roomId });
+        console.log(`Forwarded ICE candidate to room ${roomId}`);
     });
 
     socket.on('join-call', ({ roomId, username }) => {
         socket.join(roomId);
         console.log(`${username} has joined room ${roomId}`);
         socket.broadcast.to(roomId).emit('user-connected', username);
+        console.log("user voice connected")
     });
 
-    socket.on('text-change', (delta) =>{
-        socket.broadcast.emit('text-change', delta);
-    })
+    // socket.on('text-change', (delta) =>{
+    //     socket.broadcast.emit('text-change', delta);
+    // })
 
     socket.on('offer', (offer) => {
         socket.broadcast.emit('offer', offer);
+        console.log("user voice connected")
     });
     
     socket.on('answer', (answer) => {
@@ -91,6 +114,14 @@ app.use('/api/chat', chatRouter);
 app.use('/api/lecture', lectureRouter);
 app.use('/api/tutor', tutorRouter);
 app.use('/api/tutorAuth', tutorAuthRouter);
+
+async function findOrCreateDocument(id) {
+    if (id == null) return
+  console.log(id)
+    const document = await Document.findById(id)
+    if (document) return document
+    return await Document.create({ _id: id, data: defaultValue })
+}
 
 // Enviromental Variables
 const port = process.env.PORT || 4000;

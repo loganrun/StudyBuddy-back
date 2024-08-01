@@ -23,6 +23,16 @@ const TutorSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
+  },
+  documentId: {
+    type: String,
+    required: true,
+    unique: true,
+    data: Object
+  },
+  userType: {
+    type: String,
+    required: true
   }
 });
 

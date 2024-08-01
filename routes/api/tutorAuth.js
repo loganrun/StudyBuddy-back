@@ -48,6 +48,7 @@ router.post(
         tutor: {
           id: tutor.id,
           name: tutor.name,
+          userName: tutor.userName,
           roomId: tutor.roomId
         },
       };
