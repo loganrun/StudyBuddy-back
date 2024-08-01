@@ -32,7 +32,7 @@ router.post('/', [
   // return res.send(req.body)
 
   const { name, email, password } = req.body;
-  const userType = "tutor"
+  const userType = "student"
   
 
   try {
