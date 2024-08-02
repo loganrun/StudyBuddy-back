@@ -49,7 +49,9 @@ router.post(
           id: tutor.id,
           name: tutor.name,
           userName: tutor.userName,
-          roomId: tutor.roomId
+          roomId: tutor.roomId,
+          documentId: tutor.documentId,
+          userType: tutor.userType
         },
       };
 

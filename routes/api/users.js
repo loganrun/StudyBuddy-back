@@ -31,7 +31,7 @@ router.post('/', [
   // To test information being sent
   // return res.send(req.body)
 
-  const { name, email, password } = req.body;
+  const { name, email, password, userName } = req.body;
   const userType = "student"
   
 
@@ -46,6 +46,7 @@ router.post('/', [
       name,
       email,
       password,
+      userName,
       userType
     });
 
