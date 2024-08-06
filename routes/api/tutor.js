@@ -35,7 +35,7 @@ router.post('/', [
   const { name, email, password,userName } = req.body;
   const roomId = new mongoose.Types.ObjectId().toString();  // Generate a new room ID
   const documentId = new mongoose.Types.ObjectId().toString();
-  const userType = "tutor"
+  const userType = "instructor"
 
   try {
     // Check if user already exists
