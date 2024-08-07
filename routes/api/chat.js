@@ -20,7 +20,7 @@ router.get('/', async function(req, res) {
         'Connection': 'keep-alive'
     });
 
-    console.log("Open AI Stream");
+    //console.log("Open AI Stream");
 
     try {
         const response = await openai.chat.completions.create({

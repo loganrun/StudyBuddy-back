@@ -58,7 +58,6 @@ io.on('connection', (socket) => {
         console.log(`Forwarded voice answer to room ${roomId}`);
     });
     
-    
     socket.on('ice-candidate', ({ roomId, candidate }) => {
         console.log(`Received ICE candidate for room ${roomId}`, candidate);
         socket.to(roomId).emit('ice-candidate', { candidate, roomId });
@@ -71,10 +70,6 @@ io.on('connection', (socket) => {
         socket.broadcast.to(roomId).emit('user-connected', username);
         console.log("user voice connected")
     });
-
-    // socket.on('text-change', (delta) =>{
-    //     socket.broadcast.emit('text-change', delta);
-    // })
 
     socket.on('offer', (offer) => {
         socket.broadcast.emit('offer', offer);
