@@ -22,9 +22,9 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
           cd ~/StudyBuddy-back &&
           git pull origin main &&
-          npm install &&
+          /usr/bin/npm install &&
           pm2 restart all
         '
