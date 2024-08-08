@@ -7,7 +7,7 @@ import User from '../../models/User.js';
 
 // @route: GET api/users
 // @desc: Test route
-// @access: Public
+
 router.get('/', (req, res) => res.send('User Route'));
 
 // @route: POST api/users
