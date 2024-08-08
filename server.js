@@ -16,7 +16,7 @@ import Document from './models/Document.js';
 dotenv.config();
 
 
-// Initialize our app variable with Express
+// Initialize app variable with Express
 const app = express();
 
 // Socket.io setup
