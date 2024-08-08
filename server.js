@@ -112,7 +112,7 @@ app.use('/api/tutorAuth', tutorAuthRouter);
 
 async function findOrCreateDocument(id) {
     if (id == null) return
-  console.log(id)
+    // console.log(id)
     const document = await Document.findById(id)
     if (document) return document
     return await Document.create({ _id: id, data: defaultValue })
