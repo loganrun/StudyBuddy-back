@@ -11,7 +11,7 @@ import Tutor from '../../models/Tutor.js';
 // @access: Public
 router.get('/', auth, async (req, res) => {
   try {
-    const tutor = await Tutor.findById(req.tutor.id).select('-password');
+    const tutor = await Tutor.findById(req.tutor.id).select('password');
     res.json(tutor);
   } catch (error) {
     console.error(error.message);
@@ -23,6 +23,7 @@ router.post(
   '/',
   [check('email', 'Please include a valid email').isEmail(), check('password', 'Password required').exists()],
   async (req, res) => {
+    console.log("tutor route")
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
