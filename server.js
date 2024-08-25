@@ -24,6 +24,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*', methods: ['GET', 'POST']  }});
 const defaultValue = ""
+const rooms = new Map();
 
 io.on('connection', (socket) => {
     console.log('New user connected');
@@ -45,50 +46,27 @@ io.on('connection', (socket) => {
         })
     })
 
-    socket.on('voice-offer', ({ roomId, offer }) => {
-        console.log(`Received voice offer for room ${roomId}`);
-        socket.to(roomId).emit('voice-offer', { offer, roomId });
-        console.log(`Forwarded voice offer to room ${roomId}`);
-    });
-    
-    
-    socket.on('voice-answer', ({ roomId, answer }) => {
-        console.log(`Received voice answer for room ${roomId}`);
-        socket.to(roomId).emit('voice-answer', { answer, roomId });
-        console.log(`Forwarded voice answer to room ${roomId}`);
-    });
-    
-    socket.on('ice-candidate', ({ roomId, candidate }) => {
-        console.log(`Received ICE candidate for room ${roomId}`, candidate);
-        socket.to(roomId).emit('ice-candidate', { candidate, roomId });
-        console.log(`Forwarded ICE candidate to room ${roomId}`);
-    });
-
-    socket.on('join-call', ({ roomId, username }) => {
+    socket.on('join-room', (roomId, userId) => {
         socket.join(roomId);
-        console.log(`${username} has joined room ${roomId}`);
-        socket.broadcast.to(roomId).emit('user-connected', username);
-        console.log("user voice connected")
-    });
-
-    socket.on('offer', (offer) => {
-        socket.broadcast.emit('offer', offer);
-        console.log("user voice connected")
+        if (!rooms.has(roomId)) {
+        rooms.set(roomId, new Set());
+        }
+        rooms.get(roomId).add(userId);
+    
+        // Notify other users in the room
+        socket.to(roomId).emit('user-connected', userId);
+    
+        // Send list of existing users to the new user
+        const existingUsers = Array.from(rooms.get(roomId)).filter(id => id !== userId);
+        socket.emit('existing-users', existingUsers);
+    
+        socket.on('disconnect', () => {
+        rooms.get(roomId).delete(userId);
+        socket.to(roomId).emit('user-disconnected', userId);
+        });
     });
     
-    socket.on('answer', (answer) => {
-        socket.broadcast.emit('answer', answer);
-    });
     
-    socket.on('ice-candidate', (candidate) => {
-        socket.broadcast.emit('ice-candidate', candidate);
-    });
-
-    socket.on('error', (err) => {console.log(err);});
-
-    socket.on('disconnect', () => {
-        console.log('User disconnected');
-    });
 });
 
 
