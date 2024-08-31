@@ -46,6 +46,10 @@ io.on('connection', (socket) => {
         })
     })
 
+    socket.on('signal', ({ to, from, signal }) => {
+        io.to(to).emit('signal', { from, signal });
+    });
+
     socket.on('join-room', (roomId, userId) => {
         socket.join(roomId);
         if (!rooms.has(roomId)) {
