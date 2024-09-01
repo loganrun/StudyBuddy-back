@@ -24,7 +24,10 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*', methods: ['GET', 'POST']  }});
 const defaultValue = ""
-const rooms = new Map();
+//const rooms = new Map();
+
+const users = {}
+const socketToRoom = {}
 
 io.on('connection', (socket) => {
     console.log('New user connected');
@@ -50,25 +53,60 @@ io.on('connection', (socket) => {
         io.to(to).emit('signal', { from, signal });
     });
 
-    socket.on('join-room', (roomId, userId) => {
-        socket.join(roomId);
-        if (!rooms.has(roomId)) {
-        rooms.set(roomId, new Set());
+    socket.on("join room", roomID => {
+        if (users[roomID]) {
+            const length = users[roomID].length;
+            if (length === 4) {
+                socket.emit("room full");
+                return;
+            }
+            users[roomID].push(socket.id);
+        } else {
+            users[roomID] = [socket.id];
         }
-        rooms.get(roomId).add(userId);
-    
-        // Notify other users in the room
-        socket.to(roomId).emit('user-connected', userId);
-    
-        // Send list of existing users to the new user
-        const existingUsers = Array.from(rooms.get(roomId)).filter(id => id !== userId);
-        socket.emit('existing-users', existingUsers);
-    
-        socket.on('disconnect', () => {
-        rooms.get(roomId).delete(userId);
-        socket.to(roomId).emit('user-disconnected', userId);
-        });
+        socketToRoom[socket.id] = roomID;
+        const usersInThisRoom = users[roomID].filter(id => id !== socket.id);
+
+        socket.emit("all users", usersInThisRoom);
     });
+
+    socket.on("sending signal", payload => {
+        io.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID });
+    });
+
+    socket.on("returning signal", payload => {
+        io.to(payload.callerID).emit('receiving returned signal', { signal: payload.signal, id: socket.id });
+    });
+
+    socket.on('disconnect', () => {
+        const roomID = socketToRoom[socket.id];
+        let room = users[roomID];
+        if (room) {
+            room = room.filter(id => id !== socket.id);
+            users[roomID] = room;
+        }
+    })
+
+    // socket.on('join-room', (roomId, userId) => {
+    //     socket.join(roomId);
+    //     console.log(`${userId} joined room ${roomId}`)
+    //     if (!rooms.has(roomId)) {
+    //     rooms.set(roomId, new Set());
+    //     }
+    //     rooms.get(roomId).add(userId);
+    
+    //     // Notify other users in the room
+    //     socket.to(roomId).emit('user-connected', userId);
+    
+    //     // Send list of existing users to the new user
+    //     const existingUsers = Array.from(rooms.get(roomId)).filter(id => id !== userId);
+    //     socket.emit('existing-users', existingUsers);
+    
+    //     socket.on('disconnect', () => {
+    //     rooms.get(roomId).delete(userId);
+    //     socket.to(roomId).emit('user-disconnected', userId);
+    //     });
+    // });
     
     
 });
