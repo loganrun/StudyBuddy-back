@@ -26,5 +26,5 @@ jobs:
           cd ~/StudyBuddy-back &&
           git pull origin main &&
           npm install &&
-          pm2 restart all
+          pm2 restart server
         '
