@@ -1,15 +1,16 @@
 import express from 'express';
 const router = express.Router();
 import dotenv from 'dotenv';
-import OpenAI from 'openai';
-//import Groq from 'groq-sdk'
+//import OpenAI from 'openai';
+import Groq from 'groq-sdk'
 
 dotenv.config();
 
-const openai = new OpenAI({
-    apiKey: process.env.OPEN_API_KEY,
+// const openai = new OpenAI({
+//     apiKey: process.env.OPEN_API_KEY,
     
-});
+// });
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 router.get('/', async function(req, res) {
     const prompt = req.query.prompt;
@@ -23,8 +24,8 @@ router.get('/', async function(req, res) {
     //console.log("Open AI Stream");
 
     try {
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+        const response = await groq.chat.completions.create({
+            model: "llama3-8b-8192",
             messages: [{ role: "user", content: prompt }],
             temperature: 1,
             top_p: 1,
