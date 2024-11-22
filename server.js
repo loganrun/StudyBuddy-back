@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import express from 'express';
 import connectDB from './config/db.js'; 
 import cors from 'cors';
@@ -144,3 +145,5 @@ const port = process.env.PORT || 4000;
 server.listen(port, () => console.log(`Server started on port ${port}`));
 
 
+=======
+>>>>>>> 59ef88b (local)
