@@ -30,9 +30,7 @@ const users = {}
 const socketToRoom = {}
 
 io.on('connection', (socket) => {
-    console.log('New user connected');
-
-    
+    //console.log('New user connected');
 
     socket.on("get-document", async documentId => {
         //console.log(documentId)
@@ -54,7 +52,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on("join room", roomID => {
-        console.log("user connected")
+        //console.log("user connected")
         if (users[roomID]) {
             
             const length = users[roomID].length;
@@ -65,7 +63,7 @@ io.on('connection', (socket) => {
             users[roomID].push(socket.id);
         } else {
             users[roomID] = [socket.id];
-            console.log(users)
+            //console.log(users)
         }
         socketToRoom[socket.id] = roomID;
         const usersInThisRoom = users[roomID].filter(id => id !== socket.id);
@@ -141,7 +139,6 @@ async function findOrCreateDocument(id) {
     return await Document.create({ _id: id, data: defaultValue })
 }
 
-// Enviromental Variables
 const port = process.env.PORT || 4000;
 
 server.listen(port, () => console.log(`Server started on port ${port}`));
