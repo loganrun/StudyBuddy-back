@@ -24,16 +24,40 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*', methods: ['GET', 'POST']  }});
 const defaultValue = ""
-//const rooms = new Map();
+const rooms = new Map();
 
 const users = {}
 const socketToRoom = {}
 
 io.on('connection', (socket) => {
-    //console.log('New user connected');
+    console.log('New user connected');
+    //const roomId = socket.handshake.query.roomId
+    socket.on('joinRoom', ({ roomId }) => {
+        socket.join(roomId);
+        console.log(`Socket ${socket.id} joined room ${roomId}`);
+    
+        // Calculate user count in this room
+        const clients = io.sockets.adapter.rooms.get(roomId);
+        const userCount = clients ? clients.size : 0;
+    
+        // Send the user count to everyone in the room
+        io.to(roomId).emit('userCount', userCount);
+      });
+    
+      // 2) Listen for 'draw' events, then broadcast
+      socket.on('draw', (data) => {
+        // 'data' contains { x0, y0, x1, y1, color, lineWidth, roomId }
+        const { roomId } = data;
+        // Send to everyone else in the room (except the sender)
+        socket.to(roomId).emit('draw', data);
+      });
+    
+      // 3) Listen for 'clear' events, then broadcast
+      socket.on('clear', ({ roomId }) => {
+        socket.to(roomId).emit('clear');
+    });
 
     socket.on("get-document", async documentId => {
-        //console.log(documentId)
         const document = await findOrCreateDocument(documentId)
         socket.join(documentId)
         socket.emit("load-document", document.data)
@@ -51,25 +75,7 @@ io.on('connection', (socket) => {
         io.to(to).emit('signal', { from, signal });
     });
 
-    socket.on("join room", roomID => {
-        //console.log("user connected")
-        if (users[roomID]) {
-            
-            const length = users[roomID].length;
-            if (length === 4) {
-                socket.emit("room full");
-                return;
-            }
-            users[roomID].push(socket.id);
-        } else {
-            users[roomID] = [socket.id];
-            //console.log(users)
-        }
-        socketToRoom[socket.id] = roomID;
-        const usersInThisRoom = users[roomID].filter(id => id !== socket.id);
-
-        socket.emit("all users", usersInThisRoom);
-    });
+    
 
     socket.on("sending signal", payload => {
         io.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID });
