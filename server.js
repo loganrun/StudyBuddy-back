@@ -35,25 +35,19 @@ io.on('connection', (socket) => {
     socket.on('joinRoom', ({ roomId }) => {
         socket.join(roomId);
         console.log(`Socket ${socket.id} joined room ${roomId}`);
-    
-        // Calculate user count in this room
         const clients = io.sockets.adapter.rooms.get(roomId);
         const userCount = clients ? clients.size : 0;
-    
-        // Send the user count to everyone in the room
         io.to(roomId).emit('userCount', userCount);
-      });
+    });
     
-      // 2) Listen for 'draw' events, then broadcast
-      socket.on('draw', (data) => {
-        // 'data' contains { x0, y0, x1, y1, color, lineWidth, roomId }
+    // 2) Listen for 'draw' events, then broadcast
+    socket.on('draw', (data) => {
         const { roomId } = data;
-        // Send to everyone else in the room (except the sender)
         socket.to(roomId).emit('draw', data);
-      });
+    });
     
       // 3) Listen for 'clear' events, then broadcast
-      socket.on('clear', ({ roomId }) => {
+    socket.on('clear', ({ roomId }) => {
         socket.to(roomId).emit('clear');
     });
 
@@ -94,28 +88,6 @@ io.on('connection', (socket) => {
         }
     })
 
-    // socket.on('join-room', (roomId, userId) => {
-    //     socket.join(roomId);
-    //     console.log(`${userId} joined room ${roomId}`)
-    //     if (!rooms.has(roomId)) {
-    //     rooms.set(roomId, new Set());
-    //     }
-    //     rooms.get(roomId).add(userId);
-    
-    //     // Notify other users in the room
-    //     socket.to(roomId).emit('user-connected', userId);
-    
-    //     // Send list of existing users to the new user
-    //     const existingUsers = Array.from(rooms.get(roomId)).filter(id => id !== userId);
-    //     socket.emit('existing-users', existingUsers);
-    
-    //     socket.on('disconnect', () => {
-    //     rooms.get(roomId).delete(userId);
-    //     socket.to(roomId).emit('user-disconnected', userId);
-    //     });
-    // });
-    
-    
 });
 
 
