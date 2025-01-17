@@ -11,6 +11,7 @@ import chatRouter from './routes/api/chat.js';
 import lectureRouter from './routes/api/lecture.js'; 
 import tutorRouter from './routes/api/tutor.js'
 import tutorAuthRouter from './routes/api/tutorAuth.js'
+import lessonRouter from './routes/api/lesson.js';
 import Document from './models/Document.js';
 
 dotenv.config();
@@ -108,6 +109,7 @@ app.use('/api/chat', chatRouter);
 app.use('/api/lecture', lectureRouter);
 app.use('/api/tutor', tutorRouter);
 app.use('/api/tutorAuth', tutorAuthRouter);
+app.use('/api/lesson', lessonRouter);
 
 async function findOrCreateDocument(id) {
     if (id == null) return

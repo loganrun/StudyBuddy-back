@@ -25,7 +25,7 @@ router.get('/', async function(req, res) {
 
     try {
         const response = await groq.chat.completions.create({
-            model: "llama3.3-70b-versatile",
+            model: "llama-3.3-70b-versatile",
             messages: [{ role: "user", content: prompt }],
             temperature: 1,
             top_p: 1,
