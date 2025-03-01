@@ -46,8 +46,25 @@ io.on('connection', (socket) => {
         const { roomId } = data;
         socket.to(roomId).emit('draw', data);
     });
+
+    socket.on('shape', (data) => {
+        const { roomId } = data;
+        socket.to(roomId).emit('shape', data);
+    });
+
+    socket.on('text', (data) => {
+        const { roomId } = data;
+        // Broadcast the text event to all other clients in the room
+        socket.to(roomId).emit('text', data);
+    });
+
+    socket.on("undo", (data) =>{
+        const { roomId } = data;
+        socket.to(roomId).emit('undo', data);
+    })
     
-      // 3) Listen for 'clear' events, then broadcast
+    
+    // 3) Listen for 'clear' events, then broadcast
     socket.on('clear', ({ roomId }) => {
         socket.to(roomId).emit('clear');
     });
