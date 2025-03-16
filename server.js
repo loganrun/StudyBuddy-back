@@ -40,6 +40,27 @@ io.on('connection', (socket) => {
         const userCount = clients ? clients.size : 0;
         io.to(roomId).emit('userCount', userCount);
     });
+
+     // Add handlers for the client's events
+     socket.on('newItem', (item) => {
+        // Broadcast the new item to all other clients in the room
+        socket.to(item.roomId).emit('newItem', item);
+    });
+    
+    socket.on('updateItem', (item) => {
+        // Broadcast the updated item to all other clients in the room
+        socket.to(item.roomId).emit('updateItem', item);
+    });
+    
+    socket.on('undo', (data) => {
+        // Broadcast the undo action to all other clients in the room
+        socket.to(data.roomId).emit('undo', data.itemId);
+    });
+
+    // 3) Listen for 'clear' events, then broadcast
+    socket.on('clear', ({ roomId }) => {
+        socket.to(roomId).emit('clear');
+    });
     
     // 2) Listen for 'draw' events, then broadcast
     socket.on('draw', (data) => {
@@ -58,16 +79,7 @@ io.on('connection', (socket) => {
         socket.to(roomId).emit('text', data);
     });
 
-    socket.on("undo", (data) =>{
-        const { roomId } = data;
-        socket.to(roomId).emit('undo', data);
-    })
     
-    
-    // 3) Listen for 'clear' events, then broadcast
-    socket.on('clear', ({ roomId }) => {
-        socket.to(roomId).emit('clear');
-    });
 
     socket.on("get-document", async documentId => {
         const document = await findOrCreateDocument(documentId)
