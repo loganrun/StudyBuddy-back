@@ -52,7 +52,7 @@ const createToken = async () => {
 router.get('/', async (req, res) => {
     // const roomName = req.query.roomName;
     // const participantIdentity = req.query.participantIdentity;
-    console.log("reached")
+    //console.log("reached")
     // console.log(participantIdentity)
     // console.log(roomName)
 
