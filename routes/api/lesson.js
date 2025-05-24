@@ -1,8 +1,10 @@
 import express from 'express';
 const router = express.Router();
 import dotenv from 'dotenv';
+
 //import OpenAI from 'openai';
 import Groq from 'groq-sdk'
+
 
 dotenv.config();
 
@@ -11,6 +13,8 @@ dotenv.config();
     
 // });
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+    
 
 router.get('/', async function(req, res) {
     const prompt = req.query.prompt;
@@ -24,13 +28,13 @@ router.get('/', async function(req, res) {
     //console.log("Open AI Stream");
 
     try {
-        const response = await groq.chat.completions.create({
-            model: "llama-3.3-70b-versatile",
+        const response = await  groq.chat.completions.create({
+            model:   "llama-3.3-70b-versatile",
             messages: [
                 {
                     role: "system",
                     content: `
-                            You are a helpful educational assistant specialized in creating K–5 extracurricular lesson plans. 
+                    You are a helpful educational assistant specialized in creating K–5 extracurricular lesson plans. 
                             Your responses should be:
                             1. Casual and teacher-friendly in tone.
                             2. Fully fleshed-out: include objectives, materials, activities, and references or worksheets where appropriate.
@@ -41,6 +45,7 @@ router.get('/', async function(req, res) {
                             7. You may suggest additional ideas or creative approaches, as long as they follow community guidelines.
                             8. Do not include time or duration unless specifically requested.
                             9. Do not provide special accommodations unless the user requests them.
+                            
                                         `,
                 },
                 { role: "user", content: prompt }],
@@ -69,3 +74,5 @@ router.get('/', async function(req, res) {
 });
 
 export default router;
+
+

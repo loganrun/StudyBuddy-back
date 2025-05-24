@@ -2,6 +2,7 @@
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@google-cloud/storage": "^7.9.0",
+    "@google/genai": "^1.0.1",
     "@livekit/agents": "^0.7.2",
     "@livekit/agents-plugin-deepgram": "^0.5.5",
     "@livekit/agents-plugin-elevenlabs": "^0.6.2",

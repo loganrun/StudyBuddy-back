@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  
+
   email: {
     type: String,
     required: true,
@@ -22,7 +22,11 @@ const UserSchema = new mongoose.Schema({
   userType: {
     type: String,
     required: true
-  }
+  },
+  workbooks: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'workbook'
+  }]
 });
 
 export default mongoose.model('user', UserSchema);
