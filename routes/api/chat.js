@@ -2,8 +2,10 @@ import express from 'express';
 const router = express.Router();
 import dotenv from 'dotenv';
 //import OpenAI from 'openai';
-import Groq from 'groq-sdk'
+//import Groq from 'groq-sdk'
 import { GoogleGenAI } from '@google/genai';
+import Conversation from '../../models/Conversation.js';
+
 
 dotenv.config();
 
@@ -11,12 +13,14 @@ dotenv.config();
 //     apiKey: process.env.OPEN_API_KEY,
 
 // });
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+//const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
 
 router.get('/', async function (req, res) {
     const prompt = req.query.prompt;
     const type = req.query.type || 'default';
+    const userId = req.query.userId;
+    const conversationId = req.query.conversationId;
 
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
@@ -25,8 +29,6 @@ router.get('/', async function (req, res) {
     });
 
     try {
-        //const model = ai.getGenerativeModel({ model: "gemini-pro" });
-
         // Add specific prompts based on type
         let systemPrompt = '';
         switch (type) {
@@ -55,7 +57,7 @@ Specifically:
 * Maintain appropriate tone and style`;
                 break;
             default:
-                systemPrompt = `ou are an AI tutor specializing in personalized learning support. Your role is to guide students through their educational journey, fostering deep understanding and problem-solving skills. Focus on providing helpful, step-by-step guidance and support, rather than directly giving answers. Remember that learning is a process, and your role is to facilitate that process for the student.
+                systemPrompt = `You are an AI tutor specializing in personalized learning support. Your role is to guide students through their educational journey, fostering deep understanding and problem-solving skills. Focus on providing helpful, step-by-step guidance and support, rather than directly giving answers. Remember that learning is a process, and your role is to facilitate that process for the student.
 
 Specifically:
 
@@ -74,15 +76,59 @@ Specifically:
 Be patient, supportive, and enthusiastic about learning! `;
         }
 
-        const fullPrompt = `${systemPrompt}\n\nUser: ${prompt}`;
+        // 1. Fetch or create conversation
+        let conversation;
+        if (conversationId && conversationId !== 'null' && conversationId !== 'undefined') {
+            conversation = await Conversation.findById(conversationId);
+        }
+        if (!conversation) {
+            //const conversationid = uuidv4();
+            conversation = new Conversation({ userId: userId, messages: [], });
+        }
+        console.log(conversation);
+
+        // 2. Add user message
+        conversation.messages.push({
+            role: 'user',
+            content: prompt,
+            timestamp: new Date()
+        });
+
+        // 3. Build message history for AI (limit to last 10 for context)
+        const history = conversation.messages.slice(-10).map(msg => ({
+            role: msg.role,
+            parts: [{ text: msg.content }]
+        }));
+
+        // 4. Prepend system prompt to the first user message
+        if (history.length > 0 && history[0].role === 'user') {
+            history[0].parts[0].text = `${systemPrompt}\n\n${history[0].parts[0].text}`;
+        } else {
+            history.unshift({ role: 'user', parts: [{ text: systemPrompt }] });
+        }
+        const aiMessages = history;
+        console.log(aiMessages);
+
+        // 5. Call AI model
         const response = await ai.models.generateContent({
             model: "gemini-2.0-flash",
-            contents: [{ role: "user", parts: [{ text: fullPrompt }] }],
+            contents: aiMessages,
             stream: true
         });
 
         const text = response.text;
-        res.write(`data: ${JSON.stringify({ content: text })}\n\n`);
+        // 6. Add AI response to conversation
+        conversation.messages.push({
+            role: 'model',
+            content: text,
+            timestamp: new Date()
+        });
+
+        // 7. Save conversation
+        await conversation.save();
+
+        // 8. Respond to client
+        res.write(`data: ${JSON.stringify({ content: text, conversationId: conversation._id })}\n\n`);
         res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
         res.end();
     } catch (error) {
