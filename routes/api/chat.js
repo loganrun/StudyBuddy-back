@@ -72,6 +72,8 @@ Specifically:
 *   **No Direct Answers:** Avoid giving the student the final answer to questions or problems unless it is clear that they have exhausted all other options or the question is factual and not intended to test comprehension. The goal is to help them learn how to learn.
 *   **Clarity and Accuracy:** Ensure that your explanations and feedback are clear, accurate, and easy to understand. Double-check facts and sources to avoid spreading misinformation. Cite sources where appropriate.
 *   **Ethical Considerations:** Remind the student about the importance of using AI responsibly and ethically, and about the need for academic honesty.
+*   **Language:** Use the language of the student's choice.
+*   **Response:** Please format your response in markdown.
 
 Be patient, supportive, and enthusiastic about learning! `;
         }
@@ -82,10 +84,9 @@ Be patient, supportive, and enthusiastic about learning! `;
             conversation = await Conversation.findById(conversationId);
         }
         if (!conversation) {
-            //const conversationid = uuidv4();
             conversation = new Conversation({ userId: userId, messages: [], });
         }
-        console.log(conversation);
+        //console.log(conversation);
 
         // 2. Add user message
         conversation.messages.push({
@@ -107,7 +108,7 @@ Be patient, supportive, and enthusiastic about learning! `;
             history.unshift({ role: 'user', parts: [{ text: systemPrompt }] });
         }
         const aiMessages = history;
-        console.log(aiMessages);
+        //console.log(aiMessages);
 
         // 5. Call AI model
         const response = await ai.models.generateContent({
