@@ -18,7 +18,7 @@ import Document from './models/Document.js';
 dotenv.config();
 
 
-// Initialize app variable with Express
+
 const app = express();
 
 // Socket.io setup
@@ -33,7 +33,6 @@ const socketToRoom = {}
 
 io.on('connection', (socket) => {
     console.log('New user connected');
-    //const roomId = socket.handshake.query.roomId
     socket.on('joinRoom', ({ roomId }) => {
         socket.join(roomId);
         console.log(`Socket ${socket.id} joined room ${roomId}`);
@@ -42,28 +41,23 @@ io.on('connection', (socket) => {
         io.to(roomId).emit('userCount', userCount);
     });
 
-     // Add handlers for the client's events
-     socket.on('newItem', (item) => {
-        // Broadcast the new item to all other clients in the room
+     socket.on('newItem', (item) => {  
         socket.to(item.roomId).emit('newItem', item);
     });
     
     socket.on('updateItem', (item) => {
-        // Broadcast the updated item to all other clients in the room
         socket.to(item.roomId).emit('updateItem', item);
     });
     
     socket.on('undo', (data) => {
-        // Broadcast the undo action to all other clients in the room
         socket.to(data.roomId).emit('undo', data.itemId);
     });
 
-    // 3) Listen for 'clear' events, then broadcast
     socket.on('clear', ({ roomId }) => {
         socket.to(roomId).emit('clear');
     });
     
-    // 2) Listen for 'draw' events, then broadcast
+
     socket.on('draw', (data) => {
         const { roomId } = data;
         socket.to(roomId).emit('draw', data);
@@ -124,14 +118,13 @@ io.on('connection', (socket) => {
 
 connectDB();
 
-// Initialize middleware
+
 app.use(express.json({ extended: false }));
 app.use(cors());
 
-// Single endpoint just to test API. Send data to browser
 app.get('/', (req, res) => res.send('API Running'));
 
-// Define Routes
+
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/audio', audioRouter);

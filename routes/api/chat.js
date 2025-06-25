@@ -29,7 +29,6 @@ router.get('/', async function (req, res) {
     });
 
     try {
-        // Add specific prompts based on type
         let systemPrompt = '';
         switch (type) {
             case 'tutor':
@@ -78,7 +77,7 @@ Specifically:
 Be patient, supportive, and enthusiastic about learning! `;
         }
 
-        // 1. Fetch or create conversation
+        
         let conversation;
         if (conversationId && conversationId !== 'null' && conversationId !== 'undefined') {
             conversation = await Conversation.findById(conversationId);
@@ -88,20 +87,18 @@ Be patient, supportive, and enthusiastic about learning! `;
         }
         //console.log(conversation);
 
-        // 2. Add user message
+        
         conversation.messages.push({
             role: 'user',
             content: prompt,
             timestamp: new Date()
         });
 
-        // 3. Build message history for AI (limit to last 10 for context)
         const history = conversation.messages.slice(-10).map(msg => ({
             role: msg.role,
             parts: [{ text: msg.content }]
         }));
 
-        // 4. Prepend system prompt to the first user message
         if (history.length > 0 && history[0].role === 'user') {
             history[0].parts[0].text = `${systemPrompt}\n\n${history[0].parts[0].text}`;
         } else {
@@ -110,7 +107,6 @@ Be patient, supportive, and enthusiastic about learning! `;
         const aiMessages = history;
         //console.log(aiMessages);
 
-        // 5. Call AI model
         const response = await ai.models.generateContent({
             model: "gemini-2.0-flash",
             contents: aiMessages,
@@ -118,17 +114,17 @@ Be patient, supportive, and enthusiastic about learning! `;
         });
 
         const text = response.text;
-        // 6. Add AI response to conversation
+    
         conversation.messages.push({
             role: 'model',
             content: text,
             timestamp: new Date()
         });
 
-        // 7. Save conversation
+
         await conversation.save();
 
-        // 8. Respond to client
+        
         res.write(`data: ${JSON.stringify({ content: text, conversationId: conversation._id })}\n\n`);
         res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
         res.end();
