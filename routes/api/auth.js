@@ -1,10 +1,11 @@
 import express from 'express';
 const router = express.Router();
-import auth from '../../middleware/auth.mjs'; // Assuming auth.js is an ESM module
+import auth from '../../middleware/auth.mjs'; 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { check, validationResult } from 'express-validator';
-import User from '../../models/User.js'; // Assuming User.js is an ESM module
+import {User} from '../../models/User.js';
+import { Notebook } from '../../models/User.js'; 
 
 // @route: GET api/auth
 // @desc: Test route
@@ -44,11 +45,17 @@ router.post(
         return res.status(400).json({ msg: 'Invalid Credentials' });
       }
 
+      // Fetch user's notebooks (limit to last 10)
+      const notebooks = await Notebook.find({ owner: user.id }).sort({ createdAt: -1 }).limit(10);
+
       const payload = {
         user: {
           id: user.id,
-          name: user.name,
-          userType: user.userType
+          firstName: user.firstName,
+          lastName: user.lastName,
+          gradeLevel: user.gradeLevel,
+          userType: user.userType,
+          notebooks: notebooks
         },
       };
 
@@ -67,6 +74,8 @@ router.post(
     }
   }
 );
+
+
 
 export default router;
 
