@@ -13,6 +13,7 @@ import tutorRouter from './routes/api/tutor.js'
 import tutorAuthRouter from './routes/api/tutorAuth.js'
 import lessonRouter from './routes/api/lesson.js';
 import voiceAgent from './routes/api/voiceAgent.js';
+import homeworkRouter from './routes/api/homework.js';
 import Document from './models/Document.js';
 
 dotenv.config();
@@ -134,6 +135,7 @@ app.use('/api/tutor', tutorRouter);
 app.use('/api/tutorAuth', tutorAuthRouter);
 app.use('/api/lesson', lessonRouter);
 app.use('/api/voiceAgent', voiceAgent);
+app.use('/api/homework', homeworkRouter);
 
 async function findOrCreateDocument(id) {
     if (id == null) return

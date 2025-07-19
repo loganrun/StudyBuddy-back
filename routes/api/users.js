@@ -121,7 +121,8 @@ router.post('/notebooks', [
       subject,
       owner,
       notes: [],
-      resources: []
+      resources: [],
+      homework: []
     });
 
     await notebook.save();

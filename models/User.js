@@ -95,6 +95,37 @@ const resourceSchema = new mongoose.Schema({
   }
 });
 
+const homeworkSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 200
+  },
+  subject: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 100
+  },
+  originalFileRef: {
+    type: String,
+    required: true
+  },
+  work: {
+    type: String
+    
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 const notebookSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -114,7 +145,8 @@ const notebookSchema = new mongoose.Schema({
     required: true
   },
   notes: [noteSchema],
-  resources: [resourceSchema]
+  resources: [resourceSchema],
+  homework: [homeworkSchema]
 }, {
   timestamps: true
 });
@@ -123,4 +155,4 @@ const notebookSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', UserSchema);
 const Notebook = mongoose.model('Notebook', notebookSchema);
-export { User, Notebook, noteSchema, resourceSchema };
+export { User, Notebook, noteSchema, resourceSchema, homeworkSchema };
