@@ -96,21 +96,16 @@ const resourceSchema = new mongoose.Schema({
 });
 
 const homeworkSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-    maxlength: 200
-  },
+
   subject: {
     type: String,
     required: true,
     trim: true,
     maxlength: 100
   },
-  originalFileRef: {
+  processedWork: {
     type: String,
-    required: true
+    
   },
   work: {
     type: String
