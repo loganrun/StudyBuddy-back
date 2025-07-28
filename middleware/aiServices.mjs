@@ -114,6 +114,7 @@ export const generateChatResponse = async (prompt, type = 'default', userId, con
 
 export const generateHomeworkResponse = async (prompt, userId, conversationId) => {
     // const systemPrompt = systemPrompts.homework;
+    // console.log(userId, conversationId); 
     
     let conversation;
     if (conversationId && conversationId !== 'null' && conversationId !== 'undefined') {
@@ -147,7 +148,7 @@ export const generateHomeworkResponse = async (prompt, userId, conversationId) =
     });
 
         const text = response.text;
-        // console.log(text);
+        
 
     conversation.messages.push({
         role: 'model',
@@ -162,10 +163,7 @@ export const generateHomeworkResponse = async (prompt, userId, conversationId) =
         conversationId: conversation._id
     };
 
-    // return {
-    //     response,
-    //     conversation
-    // };
+   
 };
 
 export async function* streamGeminiResponse(geminiResponse) {
