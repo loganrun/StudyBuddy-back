@@ -13,8 +13,8 @@ const UserSchema = new mongoose.Schema({
     trim: true,
     maxlength: 50
   },
-  gradeLevel: {
-    type: Number,
+  grade: {
+    type: String,
     required: true,
     min: 0,
     max: 12

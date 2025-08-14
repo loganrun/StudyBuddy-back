@@ -53,7 +53,7 @@ router.post(
           id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
-          gradeLevel: user.gradeLevel,
+          grade: user.grade,
           userType: user.userType,
           notebooks: notebooks
         },

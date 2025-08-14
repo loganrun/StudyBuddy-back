@@ -48,7 +48,7 @@ router.post('/', [
   // To test information being sent
   // return res.send(req.body)
 
-  const { firstName,lastName, email, password, gradeLevel } = req.body;
+  const { firstName,lastName, email, password, grade } = req.body;
   const userType = "student"
   
 
@@ -62,7 +62,7 @@ router.post('/', [
     user = new User({
       firstName,
       lastName,
-      gradeLevel,
+      grade,
       email,
       password,
       userType
@@ -77,14 +77,16 @@ router.post('/', [
 
     // Create a JWT
     const payload = {
+      
       user: {
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
-        gradeLevel: user.gradeLevel,
+        grade: user.grade,
         userType: user.userType
       },
     };
+    
 
     jwt.sign(
       payload,
