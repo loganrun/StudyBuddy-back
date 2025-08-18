@@ -48,7 +48,7 @@ const noteSchema = new mongoose.Schema({
     maxlength: 200
   },
   content: {
-    type: String,
+    type: [{}],
     required: true
   },
   createdAt: {
