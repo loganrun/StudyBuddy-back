@@ -139,6 +139,10 @@ const notebookSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
   notes: [noteSchema],
   resources: [resourceSchema],
   homework: [homeworkSchema]
