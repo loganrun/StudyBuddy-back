@@ -24,6 +24,18 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  currentStreak: {
+    type: Number
+  },
+  longestStreak: {
+    type: Number
+  },
+  lastActivityDate: {
+    type: Date
+  },
+  streakStartDate: {
+    type: Date
+  },
   password: {
     type: String,
     required: true,

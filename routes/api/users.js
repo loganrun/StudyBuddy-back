@@ -50,6 +50,11 @@ router.post('/', [
 
   const { firstName,lastName, email, password, grade } = req.body;
   const userType = "student"
+  const currentStreak = 1
+  const longestStreak = 1
+  const today = new Date();
+  const lastActivityDate = today
+  const streakStartDate = today
   
 
   try {
@@ -63,9 +68,14 @@ router.post('/', [
       firstName,
       lastName,
       grade,
-      email,
+      email: email.toLowerCase(),
       password,
-      userType
+      userType,
+      currentStreak,
+      longestStreak,
+      lastActivityDate,
+      streakStartDate
+      
     });
 
     // Encrypt Password
@@ -83,7 +93,11 @@ router.post('/', [
         firstName: user.firstName,
         lastName: user.lastName,
         grade: user.grade,
-        userType: user.userType
+        userType: user.userType,
+        currentStreak: user.currentStreak,
+        longestStreak: user.longestStreak,
+        lastActivityDate: user.lastActivityDate,
+        streakStartDate: user.streakStartDate
       },
     };
     
@@ -155,7 +169,7 @@ router.put('/notebooks/:id', [
   
   check('name', 'Notebook name is required').not().isEmpty(),
   check('subject', 'Subject is required').not().isEmpty()
-], async (req, res) => {
+  ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
