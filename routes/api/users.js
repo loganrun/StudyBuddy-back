@@ -130,12 +130,21 @@ router.post('/notebooks', [
   }
 
   try {
-    const { name, subject, owner } = req.body;
+  const { name, subject, owner } = req.body;
+  const currentStreak = 1
+  const longestStreak = 1
+  const today = new Date();
+  const lastActivityDate = today
+  const streakStartDate = today
     
     const notebook = new Notebook({
       name,
       subject,
       owner,
+      currentStreak,
+      longestStreak,
+      lastActivityDate,
+      streakStartDate,
       notes: [],
       resources: [],
       homework: []
@@ -178,8 +187,8 @@ router.put('/notebooks/:id', [
   try {
     const { name, subject, notes, resources } = req.body;
     let notebook = await Notebook.findById(req.params.id);
-    console.log(notebook)
-    console.log(req.params.id);
+    //console.log(notebook)
+    //console.log(req.params.id);
     if (!notebook) {
       return res.status(404).json({ msg: 'Notebook not found' });
     }

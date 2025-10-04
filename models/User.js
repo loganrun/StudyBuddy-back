@@ -151,6 +151,18 @@ const notebookSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  currentStreak: {
+    type: Number
+  },
+  longestStreak: {
+    type: Number
+  },
+  lastActivityDate: {
+    type: Date
+  },
+  streakStartDate: {
+    type: Date
+  },
   createdAt: {
     type: Date,
     default: Date.now
